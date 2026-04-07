@@ -1,0 +1,56 @@
+[project]
+name = "pytorch-end-to-end"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Hlib Khorunzhyi"}
+]
+requires-python = ">=3.12"
+dependencies = [
+	"numpy>=1.26"
+]
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=7.3"
+black = ">=23.3"
+isort = ">5.12"
+flake8 = ">=6.0"
+mypy = ">=1.2"
+
+[tool.poetry.group.docs.dependencies]
+sphinx = ">=4.3"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry]
+package-mode = false
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+skip-string-normalization = false
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+known_first_party = ["pytorch-end-to-end"]
+default_section = "THIRDPARTY"
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+force_grid_wrap = 0
+combine_as_imports = true
+
+[tool.mypy]
+python_version = 3.12
+ignore_missing_imports = true
+strict = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+show_error_codes = true

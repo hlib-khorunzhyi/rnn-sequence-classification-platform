@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  app:
+    user: "${UID:-1000}"
+    hostname: "${HOST-khorunzhyi}"
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        USER_NAME: "${USERNAME:-khorunzhyi}"
+        USER_ID: "${UID:-1000}"
+    image: pytorch-end-to-end-template
+    container_name: pytorch-end-to-end-template
+    # env_file:
+    #   - .envs/.app 
+    volumes:
+      - ./:/app/
+      - ~/.config/gcloud:${HOME}/.config/gcloud
+    ports:
+      - 8080:8080
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    
+    ipc: host
+    init: true
