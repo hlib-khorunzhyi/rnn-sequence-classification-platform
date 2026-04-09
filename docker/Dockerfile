@@ -54,4 +54,4 @@ RUN chown -R ${USER_NAME} /*.sh && chmod +x /*.sh
 USER ${USER_NAME}
 
 COPY . /app/
-CMD ["/startup-scripts.sh"]
+CMD ["/startup-script.sh"]

@@ -1,6 +1,6 @@
 *
 
 !docker/
-!pytorch-end-to-end/
+!pytorch_end_to_end/
 !pyproject.toml
 !poetry.lock

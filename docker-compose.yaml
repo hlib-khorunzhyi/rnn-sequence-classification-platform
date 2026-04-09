@@ -2,16 +2,16 @@ version: '3.8'
 
 services:
   app:
-    user: "${UID:-1000}"
-    hostname: "${HOST-khorunzhyi}"
+    user: "${USER_ID:-1000}"
+    hostname: "${HOST_NAME-khorunzhyi}"
+    image: pytorch_end_to_end-template
+    container_name: pytorch_end_to_end-template-container_name
     build:
       context: .
       dockerfile: ./docker/Dockerfile
       args:
-        USER_NAME: "${USERNAME:-khorunzhyi}"
-        USER_ID: "${UID:-1000}"
-    image: pytorch-end-to-end-template
-    container_name: pytorch-end-to-end-template
+        USER_NAME: "${USER_NAME:-khorunzhyi}"
+        USER_ID: "${USER_ID:-1000}"
     # env_file:
     #   - .envs/.app 
     volumes:
@@ -20,13 +20,13 @@ services:
     ports:
       - 8080:8080
 
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
     
     ipc: host
     init: true
