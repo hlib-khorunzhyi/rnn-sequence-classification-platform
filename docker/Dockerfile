@@ -55,3 +55,6 @@ USER ${USER_NAME}
 
 COPY . /app/
 CMD ["/startup-script.sh"]
+
+RUN git config --global user.email "khorunzhyi519@gmail.com" \
+    && git config --global user.name "Hlib Khorunzhyi"
