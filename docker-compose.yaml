@@ -3,9 +3,9 @@ version: '3.8'
 services:
   app:
     user: "${USER_ID:-1000}"
-    hostname: "${HOST_NAME-khorunzhyi}"
+    hostname: "${HOST_NAME:-khorunzhyi}"
     image: pytorch_end_to_end-template
-    container_name: pytorch_end_to_end-template-container_name
+    container_name: pytorch_end_to_end-template-container
     build:
       context: .
       dockerfile: ./docker/Dockerfile
