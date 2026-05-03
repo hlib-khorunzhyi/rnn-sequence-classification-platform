@@ -27,7 +27,7 @@ guard-%:
 	@#$(or ${$*}, $(error $* is no set))
 
 ## Version data
-version_data: up
+version-data: up
 	$(DOCKER_COMPOSE_EXEC) python ./pytorch_end_to_end/version_data.py
 
 ## Starts jupyter lab
