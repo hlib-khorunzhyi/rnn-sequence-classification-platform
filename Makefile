@@ -14,7 +14,7 @@ else
 endif
 
 SERVICE_NAME = app
-CONTAINER_NAME = pytorch_end_to_end-template-container
+CONTAINER_NAME = pytorch_end_to_end-container
 
 DIRS_TO_VALIDATE = pytorch_end_to_end
 DOCKER_COMPOSE_RUN = $(DOCKER_COMPOSE_COMMAND) run --rm $(SERVICE_NAME)
@@ -32,7 +32,7 @@ entrypoint: up
 
 ## Starts jupyter lab
 notebook: up
-	$(DOCKER_COMPOSE_EXEC) juypter-lab --ip 0.0.0. --port 8888 --no-browser
+	$(DOCKER_COMPOSE_EXEC) juypter-lab --ip 0.0.0.0 --port 8888 --no-browser
 
 ## Sort code using isort
 sort: up
@@ -80,7 +80,7 @@ build-for-dependencies:
 
 ## Lock dependencies with poetry
 lock-dependencies: build-for-dependencies
-	$(DOCKER_COMPOSE_RUN) bash -c "if [ -e /home/hlibk/poetry.lock.build ]; then cp /home/hlibk/poetry.lock.build ./poetry.lock; else poetry lock; fi"
+	$(DOCKER_COMPOSE_RUN) bash -c "if [ -e /home/${USER_NAME}/poetry.lock.build ]; then cp /home/${USER_NAME}/poetry.lock.build ./poetry.lock; else poetry lock; fi"
 
 ## Starts docker container using "docker-compose up -d"
 up:
