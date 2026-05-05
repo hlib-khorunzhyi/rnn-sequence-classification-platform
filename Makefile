@@ -14,9 +14,9 @@ else
 endif
 
 SERVICE_NAME = app
-CONTAINER_NAME = pytorch_end_to_end-container
+CONTAINER_NAME = rnn-sequence-classification-platform-container
 
-DIRS_TO_VALIDATE = pytorch_end_to_end
+DIRS_TO_VALIDATE = src
 DOCKER_COMPOSE_RUN = $(DOCKER_COMPOSE_COMMAND) run --rm $(SERVICE_NAME)
 DOCKER_COMPOSE_EXEC = $(DOCKER_COMPOSE_COMMAND) exec $(SERVICE_NAME)
 
@@ -28,7 +28,7 @@ guard-%:
 
 ## Version data
 version-data: up
-	$(DOCKER_COMPOSE_EXEC) python ./pytorch_end_to_end/version_data.py
+	$(DOCKER_COMPOSE_EXEC) python ./src/version_data.py
 
 ## Starts jupyter lab
 notebook: up

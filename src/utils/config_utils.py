@@ -1,13 +1,14 @@
-from typing import Any, Optional
-import yaml
 import logging
 import logging.config
+from typing import Any, Optional
 
 import hydra
+import yaml
 from hydra.types import TaskFunction
 from omegaconf import DictConfig, OmegaConf
 
-from pytorch_end_to_end.config_schemas import config_schema
+from src.config_schemas import config_schema
+
 
 def get_config(config_path: str, config_name: str) -> TaskFunction:
     setup_config()
@@ -18,7 +19,9 @@ def get_config(config_path: str, config_name: str) -> TaskFunction:
         def decorated_main(dict_config: Optional[DictConfig] = None) -> Any:
             config = OmegaConf.to_object(dict_config)
             return task_function(config)
+
         return decorated_main
+
     return main_decorator
 
 
@@ -27,7 +30,6 @@ def setup_config() -> None:
 
 
 def setup_logger() -> None:
-    with open("./pytorch_end_to_end/configs/hydra/job_logging/custom.yaml", "r") as stream:
-        config =yaml.load(stream, Loader=yaml.FullLoader)
+    with open("./src/configs/hydra/job_logging/custom.yaml", "r") as stream:
+        config = yaml.load(stream, Loader=yaml.FullLoader)
     logging.config.dictConfig(config)
-

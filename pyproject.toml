@@ -1,5 +1,5 @@
 [project]
-name = "pytorch_end_to_end"
+name = "rnn-sequence-classification-platform"
 version = "0.1.0"
 description = ""
 authors = [
@@ -39,7 +39,7 @@ profile = "black"
 line_length = 88
 multi_line_output = 3
 include_trailing_comma = true
-known_first_party = ["pytorch_end_to_end"]
+known_first_party = ["src"]
 default_section = "THIRDPARTY"
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
 force_grid_wrap = 0

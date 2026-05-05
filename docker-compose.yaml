@@ -4,8 +4,8 @@ services:
   app:
     user: "${USER_ID:-1000}"
     hostname: "${HOST_NAME:-khorunzhyi}"
-    image: pytorch_end_to_end
-    container_name: pytorch_end_to_end-container
+    image: rnn-sequence-classification-platform
+    container_name: rnn-sequence-classification-platform-container
     build:
       context: .
       dockerfile: ./docker/Dockerfile

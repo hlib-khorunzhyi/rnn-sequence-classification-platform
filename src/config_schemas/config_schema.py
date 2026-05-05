@@ -8,6 +8,7 @@ class Config:
     dvc_remote_url: str = "gs://u7501643495/data/raw"
     dvc_raw_data_folder: str = "data/raw"
 
+
 def setup_config() -> None:
     cs = ConfigStore.instance()
     cs.store(name="config_schema", node=Config)
