@@ -8,9 +8,6 @@ from src.utils.data_utils import commit_to_dvc, initialize_dvc_storage, initilaz
 
 @get_config(config_path="../configs", config_name="config")
 def version_data(config: Config) -> None:
-    print("success")
-    return
-
     initilaze_dvc()
     initialize_dvc_storage(config.dvc_remote_name, config.dvc_remote_url)
 
