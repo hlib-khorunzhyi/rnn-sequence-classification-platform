@@ -14,10 +14,12 @@ services:
         USER_ID: "${USER_ID:-1000}"
     # env_file:
     #   - .envs/.app 
+    environment:
+      - SSH_AUTH_SOCK=/ssh-agent
     volumes:
       - ./:/app/
       - ~/.config/gcloud:/home/${USER_NAME}/.config/gcloud
-      - ./.ssh:/home/${USER_NAME}./ssh
+      - $SSH_AUTH_SOCK:/ssh-agent
     ports:
       - 8888:8888
     ipc: host

@@ -20,6 +20,7 @@ DIRS_TO_VALIDATE = src
 DOCKER_COMPOSE_RUN = $(DOCKER_COMPOSE_COMMAND) run --rm $(SERVICE_NAME)
 DOCKER_COMPOSE_EXEC = $(DOCKER_COMPOSE_COMMAND) exec $(SERVICE_NAME)
 
+export SSH_AUTH_SOCK
 export
 
 # Returns true if the stem is a non-empty environment variable, or else raises an error

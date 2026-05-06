@@ -17,7 +17,7 @@ ENV PYTHONUNBUFFERED=1 \
     BUILD_POETRY_LOCK="${HOME}/poetry.lock.build"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    vim gcc curl git build-essential libb64-dev ca-certificates gnupg \
+    vim gcc curl git build-essential libb64-dev ca-certificates gnupg openssh-client \
     && ln -s /usr/bin/python3 /usr/bin/python \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
