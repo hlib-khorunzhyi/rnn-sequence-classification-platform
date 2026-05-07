@@ -1,7 +1,7 @@
 from pathlib import Path
 from subprocess import CalledProcessError
 
-from src.utils import get_logger, run_shell_command
+from utils import get_logger, run_shell_command
 
 DATA_UTILS_LOGGER = get_logger(Path(__file__).name)
 
@@ -10,7 +10,7 @@ def is_dvc_initialized() -> bool:
     return (Path().cwd() / ".dvc").exists()
 
 
-def initilaze_dvc() -> None:
+def initialize_dvc() -> None:
     if is_dvc_initialized():
         DATA_UTILS_LOGGER.info("DVC is already initialized")
         return
@@ -35,9 +35,12 @@ def initialize_dvc_storage(dvc_remote_name: str, dvc_remote_url: str) -> None:
 
 
 def commit_to_dvc(dvc_raw_data_folder: str, dvc_remote_name: str) -> None:
-    current_version = run_shell_command("git tag --list | sort -t v -k 2 -g | tail -1 | sed 's/v//'").strip()
+    current_version = run_shell_command(
+        "git tag --list | sort -t v -k 2 -g | tail -1 | sed 's/v//'"
+    ).strip()
     if not current_version:
         current_version = "0"
+    
     next_version = f"v{int(current_version)+1}"
     run_shell_command(f"dvc add {dvc_raw_data_folder}")
     run_shell_command("git add .")

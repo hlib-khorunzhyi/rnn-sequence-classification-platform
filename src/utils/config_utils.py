@@ -1,16 +1,19 @@
 import logging
 import logging.config
-from typing import Any, Optional
+from collections.abc import Callable
+from typing import Any, Optional, TypeVar
 
 import hydra
 import yaml
 from hydra.types import TaskFunction
 from omegaconf import DictConfig, OmegaConf
 
-from src.config_schemas import config_schema
+from config_schemas import config_schema
+
+F = TypeVar("F", bound=TaskFunction)
 
 
-def get_config(config_path: str, config_name: str) -> TaskFunction:
+def get_config(config_path: str, config_name: str) -> Callable[[F], F]:
     setup_config()
     setup_logger()
 
