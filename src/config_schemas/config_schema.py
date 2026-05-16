@@ -1,13 +1,17 @@
 from hydra.core.config_store import ConfigStore
 from pydantic.dataclasses import dataclass
+from dataclasses import field
+
+from config_schemas.dvc_config_schema import DVCConfig
+from config_schemas.infrastructure.gcp_schema import GCPConfig
+from config_schemas.data_processing_config_schema import DataProcessingConfig
 
 
 @dataclass
 class Config:
-    dvc_remote_name: str = "gcs-storage"
-    dvc_remote_url: str = "gs://u7501643495/data/raw"
-    dvc_raw_data_folder: str = "data/raw"
-
+    version_data: DVCConfig = field(default_factory=DVCConfig)
+    process_data: DataProcessingConfig = field(default_factory=DataProcessingConfig)
+    infastructure: GCPConfig = field(default_factory=GCPConfig)
 
 def setup_config() -> None:
     cs = ConfigStore.instance()

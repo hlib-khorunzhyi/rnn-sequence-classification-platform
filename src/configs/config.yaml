@@ -9,3 +9,6 @@ hydra:
   output_subdir: null
   run: 
     dir: .
+
+process_data:
+  version: v1

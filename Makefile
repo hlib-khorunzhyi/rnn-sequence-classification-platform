@@ -31,6 +31,10 @@ guard-%:
 version-data: up
 	$(DOCKER_COMPOSE_EXEC) python ./src/version_data.py
 
+## Process data
+process-data: up
+	$(DOCKER_COMPOSE_EXEC) python ./src/process_data.py
+
 ## Prepare dataset
 prepare-dataset: up
 	$(DOCKER_COMPOSE_EXEC) python ./src/prepare_data.py
