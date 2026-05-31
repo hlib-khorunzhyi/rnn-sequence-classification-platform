@@ -8,6 +8,10 @@ from utils.gcp_utils import access_secret_version
 
 @get_config(config_path="../configs", config_name="config")
 def process_data(config: Config) -> None:
+    # from omegaconf import OmegaConf
+    # print(OmegaConf.to_yaml(config))
+    # return
+
     github_access_token = access_secret_version(
         config.infrastructure.project_id,
         config.process_data.github_access_token_secret_id,
@@ -26,6 +30,9 @@ def process_data(config: Config) -> None:
     df = dataset_reader_manager.read_data()
 
     print(df.head())
+    print(df.tail())
+
+    print(df.compute()["dataset_name"].unique())
 
 
 if __name__ == "__main__":

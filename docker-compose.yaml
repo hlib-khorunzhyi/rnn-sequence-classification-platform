@@ -14,6 +14,7 @@ services:
     #   - .envs/.app 
     environment:
       - SSH_AUTH_SOCK=/ssh-agent
+      - DASK_DATAFRAME_EXPR=False
     volumes:
       - ./:/app/
       - ~/.config/gcloud:/home/${USER_NAME}/.config/gcloud
