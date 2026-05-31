@@ -1,8 +1,10 @@
 defaults:
   - config_schema
+  - process_data/dataset_reader_manager: ghc_jigsaw_twitter
 
   - override hydra/job_logging: custom
   - override hydra/hydra_logging: disabled
+
   - _self_
 
 hydra:
@@ -11,4 +13,4 @@ hydra:
     dir: .
 
 process_data:
-  version: v1
+  version: v3
