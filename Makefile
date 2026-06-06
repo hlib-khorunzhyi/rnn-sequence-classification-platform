@@ -69,6 +69,7 @@ lint: up format-check sort-check
 ## Check type annotations using mypy
 check-type-annotations: up
 	$(DOCKER_COMPOSE_EXEC) mypy $(DIRS_TO_VALIDATE)
+# 	$(DOCKER_COMPOSE_EXEC) mypy --clean-cache $(DIRS_TO_VALIDATE)
 
 ## Run tests with pytest
 test: up

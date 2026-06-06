@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 import dask.dataframe as dd
-from dask_ml.model_selection import train_test_split
 
 from src.utils import get_logger
 
@@ -34,7 +33,9 @@ class DatasetReader(ABC):
             raise ValueError(
                 f"Dataset must contain all required split names: {self.split_names}"
             )
-        return df[list(self.required_columns)]
+
+        result: dd.DataFrame = df[list(self.required_columns)]
+        return result
 
     @abstractmethod
     def _read_data(self) -> tuple[dd.DataFrame, dd.DataFrame, dd.DataFrame]:
@@ -49,12 +50,14 @@ class DatasetReader(ABC):
         train_df["split"] = "train"
         dev_df["split"] = "dev"
         test_df["split"] = "test"
-        return dd.concat([train_df, dev_df, test_df])
+
+        result: dd.DataFrame = dd.concat([train_df, dev_df, test_df])  # type: ignore[no-untyped-call]
+        return result
 
     def split_dataset(
         self, df: dd.DataFrame, test_size: float, stratify_column: Optional[str] = None
     ) -> tuple[dd.DataFrame, dd.DataFrame]:
-        pdf = df.compute()
+        pdf = df.compute()  # type: ignore[no-untyped-call]
 
         from sklearn.model_selection import train_test_split as sk_split
 
@@ -71,7 +74,7 @@ class DatasetReader(ABC):
                 stratify=pdf[stratify_column],
             )
 
-        return dd.from_pandas(train_pdf, npartitions=2), dd.from_pandas(
+        return dd.from_pandas(train_pdf, npartitions=2), dd.from_pandas(  # type: ignore[no-untyped-call]
             dev_pdf, npartitions=2
         )
 
@@ -187,5 +190,5 @@ class DatasetReaderManager:
             dataset_reader.read_data()
             for dataset_reader in self.dataset_readers.values()
         ]
-        df = dd.concat(dfs)
+        df: dd.DataFrame = dd.concat(dfs)  # type: ignore[no-untyped-call]
         return df
