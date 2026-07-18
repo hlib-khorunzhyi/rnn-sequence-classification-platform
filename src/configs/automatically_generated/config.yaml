@@ -3,7 +3,7 @@ version_data:
   dvc_remote_url: gs://hlib4081_bucket/data/raw
   dvc_raw_data_folder: data/raw
 process_data:
-  version: v3
+  version: v4
   data_local_save_dir: ./data/raw
   dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
   dvc_data_folder: data/raw
@@ -20,7 +20,7 @@ process_data:
         gcp_github_access_token_secret_id: rnn-scp-data-github-access-token
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
-        version: v3
+        version: v4
         dev_split_ratio: 0.3
       jtc:
         _target_: src.data_processing.dataset_readers.JigsawToxicCommentDatasetReader
@@ -30,7 +30,7 @@ process_data:
         gcp_github_access_token_secret_id: rnn-scp-data-github-access-token
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
-        version: v3
+        version: v4
         dev_split_ratio: 0.06
       twitter:
         _target_: src.data_processing.dataset_readers.TwitterDatasetReader
@@ -40,7 +40,7 @@ process_data:
         gcp_github_access_token_secret_id: rnn-scp-data-github-access-token
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
-        version: v3
+        version: v4
         dev_split_ratio: 0.25
         test_split_ratio: 0.2
     repartition: true
@@ -92,7 +92,7 @@ process_data:
     worker_class: null
   processed_data_save_dir: ./data/processed
   docker_image_name: europe-west4-docker.pkg.dev/project-6b154f17-21bb-4de7-947/rnn-sequence-classification-platform/data-processing
-  docker_image_tag: f1bc5082-189b-433e-9683-3ffe665fbc58
+  docker_image_tag: 397fd112-e34a-4012-88a0-88fc73574e87
 infrastructure:
   project_id: project-6b154f17-21bb-4de7-947
   zone: europe-west4-b

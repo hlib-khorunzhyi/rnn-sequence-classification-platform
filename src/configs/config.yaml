@@ -15,5 +15,5 @@ hydra:
     dir: .
 
 process_data:
-  version: v3
+  version: v4
   processed_data_save_dir: ./data/processed
