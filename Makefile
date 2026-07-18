@@ -21,7 +21,7 @@ DOCKER_COMPOSE_RUN = $(DOCKER_COMPOSE_COMMAND) run --rm $(SERVICE_NAME)
 DOCKER_COMPOSE_EXEC = $(DOCKER_COMPOSE_COMMAND) exec $(SERVICE_NAME)
 
 LOCAL_DOCKER_IMAGE_NAME = rnn-sequence-classification-platform
-GCP_DOCKER_IMAGE_NAME = europe-west4-docker.pkg.dev/project-691a97a1-8e67-4462-90d/rnn-sequence-classification-platform/data-processing
+GCP_DOCKER_IMAGE_NAME = europe-west4-docker.pkg.dev/project-6b154f17-21bb-4de7-947/rnn-sequence-classification-platform/data-processing
 GCP_DOCKER_IMAGE_TAG := $(shell uuidgen)
 
 export SSH_AUTH_SOCK

@@ -4,6 +4,7 @@ import logging
 import logging.config
 import os
 from collections.abc import Callable
+from dataclasses import asdict
 from typing import Any, Optional, TypeVar
 from io import StringIO, BytesIO
 

@@ -19,7 +19,7 @@ class DataProcessingConfig:
     dvc_data_folder: str = "data/raw"
     github_user_name: str = "hlib-khorunzhyi"
     github_access_token_secret_id: str = (
-        "rnn-sequence-classification-platform-github-access-token"
+        "rnn-scp-data-github-access-token"
     )
 
     dataset_reader_manager: dataset_reader_schema.DatasetReaderManagerConfig = MISSING

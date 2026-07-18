@@ -51,7 +51,7 @@ def commit_to_dvc(dvc_raw_data_folder: str, dvc_remote_name: str) -> None:
     run_shell_command(f"dvc add {dvc_raw_data_folder}")
     run_shell_command("git add .")
     run_shell_command(
-        f"git commit -m 'Updated version of the data from v{current_version} to {next_version}'"
+        f"git commit --allow-empty -m 'Updated version of the data from v{current_version} to {next_version}'"
     )
     run_shell_command(f"git tag -a {next_version} -m 'Data version {next_version}'")
     run_shell_command(f"dvc push {dvc_raw_data_folder}.dvc --remote {dvc_remote_name}")
@@ -60,14 +60,14 @@ def commit_to_dvc(dvc_raw_data_folder: str, dvc_remote_name: str) -> None:
 
 
 def make_new_data_version(dvc_raw_data_folder: str, dvc_remote_name: str) -> None:
-    try:
-        status = run_shell_command(f"dvc status {dvc_raw_data_folder}.dvc")
-        if status == "Data and pipelines are up to date.\n":
-            DATA_UTILS_LOGGER.info("Data and pipelines are up to date.")
-            return
-        commit_to_dvc(dvc_raw_data_folder, dvc_remote_name)
-    except CalledProcessError:
-        commit_to_dvc(dvc_raw_data_folder, dvc_remote_name)
+    # try:
+    #     status = run_shell_command(f"dvc status {dvc_raw_data_folder}.dvc")
+    #     if status == "Data and pipelines are up to date.\n":
+    #         DATA_UTILS_LOGGER.info("Data and pipelines are up to date.")
+    #         return
+    #     commit_to_dvc(dvc_raw_data_folder, dvc_remote_name)
+    # except CalledProcessError:
+    commit_to_dvc(dvc_raw_data_folder, dvc_remote_name)
 
 
 def get_cmd_to_get_raw_data(

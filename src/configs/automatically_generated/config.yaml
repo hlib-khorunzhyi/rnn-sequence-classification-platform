@@ -1,6 +1,6 @@
 version_data:
   dvc_remote_name: gcs-storage
-  dvc_remote_url: gs://u7501643495/data/raw
+  dvc_remote_url: gs://hlib4081_bucket/data/raw
   dvc_raw_data_folder: data/raw
 process_data:
   version: v3
@@ -8,7 +8,7 @@ process_data:
   dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
   dvc_data_folder: data/raw
   github_user_name: hlib-khorunzhyi
-  github_access_token_secret_id: rnn-sequence-classification-platform-github-access-token
+  github_access_token_secret_id: rnn-scp-data-github-access-token
   dataset_reader_manager:
     _target_: src.data_processing.dataset_readers.DatasetReaderManager
     dataset_readers:
@@ -16,8 +16,8 @@ process_data:
         _target_: src.data_processing.dataset_readers.GHCDatasetReader
         dataset_dir: ./data/raw/ghc
         dataset_name: ghc
-        gcp_project_id: '678870124781'
-        gcp_github_access_token_secret_id: rnn-sequence-classification-platform-github-access-token
+        gcp_project_id: project-6b154f17-21bb-4de7-947
+        gcp_github_access_token_secret_id: rnn-scp-data-github-access-token
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
         version: v3
@@ -26,8 +26,8 @@ process_data:
         _target_: src.data_processing.dataset_readers.JigsawToxicCommentDatasetReader
         dataset_dir: ./data/raw/jigsaw-toxic-comments
         dataset_name: jtc
-        gcp_project_id: '678870124781'
-        gcp_github_access_token_secret_id: rnn-sequence-classification-platform-github-access-token
+        gcp_project_id: project-6b154f17-21bb-4de7-947
+        gcp_github_access_token_secret_id: rnn-scp-data-github-access-token
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
         version: v3
@@ -36,8 +36,8 @@ process_data:
         _target_: src.data_processing.dataset_readers.TwitterDatasetReader
         dataset_dir: ./data/raw/twitter
         dataset_name: twitter
-        gcp_project_id: '678870124781'
-        gcp_github_access_token_secret_id: rnn-sequence-classification-platform-github-access-token
+        gcp_project_id: project-6b154f17-21bb-4de7-947
+        gcp_github_access_token_secret_id: rnn-scp-data-github-access-token
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
         version: v3
@@ -76,40 +76,24 @@ process_data:
       stop_words:
         _target_: src.data_processing.dataset_cleaners.StopWordsDatasetCleaner
   dask_cluster:
-    _target_: dask_cloudprovider.gcp.GCPCluster
-    n_workers: 3
-    projectid: '678870124781'
-    zone: $infrastructure.zone
-    network: default
-    network_projectid: '678870124781'
-    machine_type: n1-standard-1
-    source_image: projects/ubuntu-os-cloud/global/images/ubuntu-minimal-2004-focal-v20220203
-    docker_image: europe-west4-docker.pkg.dev/project-691a97a1-8e67-4462-90d/rnn-sequence-classification-platform/data-processing:bc61a269-7192-44c9-a325-e79b015f265a
-    docker_args: '--log-driver=gcplogs
-
-      '
-    extra_bootstrap:
-    - gcloud auth configure-docker --quiet europe-west4-docker.pkg.dev
-    ngpus: 0
-    filesystem_size: 50
-    disk_type: pd-standard
-    on_host_maintenance: TERMINATE
-    bootstrap: false
-    worker_class: dask.distributed.Nanny
-    worker_options:
-      nthreads: 1
-    env_vars: {}
-    scheduler_options: {}
-    silence_logs: null
-    asynchronous: null
-    security: true
-    preemptible: false
-    debug: false
-    instance_labels: null
+    _target_: dask.distributed.LocalCluster
+    n_workers: 12
+    memory_limit: auto
+    processes: true
+    threads_per_worker: 1
+    scheduler_port: 8786
+    host: null
+    dashboard_address: :8787
+    asynchronous: false
+    blocked_handlers: null
+    service_kwargs: null
+    security: null
+    protocol: null
+    worker_class: null
   processed_data_save_dir: ./data/processed
-  docker_image_name: europe-west4-docker.pkg.dev/project-691a97a1-8e67-4462-90d/rnn-sequence-classification-platform/data-processing
-  docker_image_tag: bc61a269-7192-44c9-a325-e79b015f265a
+  docker_image_name: europe-west4-docker.pkg.dev/project-6b154f17-21bb-4de7-947/rnn-sequence-classification-platform/data-processing
+  docker_image_tag: f1bc5082-189b-433e-9683-3ffe665fbc58
 infrastructure:
-  project_id: '678870124781'
+  project_id: project-6b154f17-21bb-4de7-947
   zone: europe-west4-b
   network: default
