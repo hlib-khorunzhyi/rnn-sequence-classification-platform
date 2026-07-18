@@ -1,8 +1,13 @@
 from pathlib import Path
 from shutil import rmtree
 from subprocess import CalledProcessError
+import psutil
+import dask.dataframe as dd
+from typing import Optional
+import pandas as pd
 
 from utils import get_logger, run_shell_command
+from utils.gcp_utils import access_secret_version
 
 DATA_UTILS_LOGGER = get_logger(Path(__file__).name)
 
@@ -124,3 +129,27 @@ def get_raw_data_with_version(
         github_access_token,
     )
     run_shell_command(command)
+
+
+def repartition_dataframe(
+    df: dd.DataFrame,
+    min_partition_size: str, 
+) -> dd.DataFrame:
+    
+    DATA_UTILS_LOGGER.info("Smart repartitioning based on target partition size...")
+    partitioned_df = df.repartition(partition_size=min_partition_size)
+    
+    return partitioned_df
+
+
+def get_repo_address_with_access_token(
+    gcp_project_id: str, gcp_secret_id: str, repo_address: str, user_name: str
+) -> str:
+    access_token = access_secret_version(gcp_project_id, gcp_secret_id)
+    repo_address = repo_address.replace("https://", "")
+    return f"https://{user_name}:{access_token}@{repo_address}"
+
+
+def filter_based_on_minimum_number_of_words(df: pd.DataFrame, min_nrof_words: int) -> pd.DataFrame:
+    return df[df["cleaned_text"].str.split().apply(len) >= min_nrof_words]
+

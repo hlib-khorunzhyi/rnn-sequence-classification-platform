@@ -15,9 +15,11 @@ services:
     environment:
       - SSH_AUTH_SOCK=/ssh-agent
       - DASK_DATAFRAME_EXPR=False
+      # - GOOGLE_APPLICATION_CREDENTIALS=/home/${USER_NAME}/.config/gcloud/application_default_credentials.json
     volumes:
       - ./:/app/
       - ~/.config/gcloud:/home/${USER_NAME}/.config/gcloud
+      - ~/.config/gcloud:/root/.config/gcloud
       - $SSH_AUTH_SOCK:/ssh-agent
     ports:
       - 8888:8888

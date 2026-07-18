@@ -2,6 +2,7 @@ defaults:
   - config_schema
   - process_data/dataset_reader_manager: ghc_jigsaw_twitter
   - process_data/dataset_cleaner_manager: simple_dataset_cleaner
+  - process_data/dask_cluster: local_dask_cluster
 
   - override hydra/job_logging: custom
   - override hydra/hydra_logging: disabled
@@ -15,3 +16,4 @@ hydra:
 
 process_data:
   version: v3
+  processed_data_save_dir: ./data/processed

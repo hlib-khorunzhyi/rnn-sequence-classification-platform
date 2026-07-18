@@ -6,6 +6,7 @@ from src.config_schemas.data_processing import (
     dataset_cleaner_schema,
     dataset_reader_schema,
 )
+from src.config_schemas.data_processing.dask_cluster import dask_cluster_schema
 
 
 @dataclass
@@ -26,10 +27,17 @@ class DataProcessingConfig:
         MISSING
     )
 
+    dask_cluster: dask_cluster_schema.DaskClusterConfig = MISSING
+    
+    processed_data_save_dir: str = MISSING
+
+    # docker_image_name: str = MISSING
+    # docker_image_tag: str = MISSING
 
 def setup_config() -> None:
     dataset_reader_schema.setup_config()
     dataset_cleaner_schema.setup_config()
+    dask_cluster_schema.setup_config()
 
     cs = ConfigStore.instance()
     cs.store(name="data_processing_config_schema", node=DataProcessingConfig)

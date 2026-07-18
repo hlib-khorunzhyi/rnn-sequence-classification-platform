@@ -20,6 +20,10 @@ DIRS_TO_VALIDATE = src
 DOCKER_COMPOSE_RUN = $(DOCKER_COMPOSE_COMMAND) run --rm $(SERVICE_NAME)
 DOCKER_COMPOSE_EXEC = $(DOCKER_COMPOSE_COMMAND) exec $(SERVICE_NAME)
 
+LOCAL_DOCKER_IMAGE_NAME = rnn-sequence-classification-platform
+GCP_DOCKER_IMAGE_NAME = europe-west4-docker.pkg.dev/project-691a97a1-8e67-4462-90d/rnn-sequence-classification-platform/data-processing
+GCP_DOCKER_IMAGE_TAG := $(shell uuidgen)
+
 export SSH_AUTH_SOCK
 export
 
@@ -27,13 +31,31 @@ export
 guard-%:
 	@#$(or ${$*}, $(error $* is no set))
 
+## Generate final config. CONFIG_NAME=<config_name> has to be provided for overrides use: OVERRIDES=<overrides>
+generate-final-config: up guard-CONFIG_NAME
+	$(DOCKER_COMPOSE_EXEC) python ./src/generate_final_config.py --config-name $(CONFIG_NAME) --overrides process_data.docker_image_name=$(GCP_DOCKER_IMAGE_NAME) process_data.docker_image_tag=$(GCP_DOCKER_IMAGE_TAG) $(OVERRIDES)
+
+## Generate final main config.
+generate-main-config: up
+	$(DOCKER_COMPOSE_EXEC) python ./src/generate_final_config.py --config-name config --overrides process_data.docker_image_name=$(GCP_DOCKER_IMAGE_NAME) process_data.docker_image_tag=$(GCP_DOCKER_IMAGE_TAG) $(OVERRIDES)
+
 ## Version data
 version-data: up
 	$(DOCKER_COMPOSE_EXEC) python ./src/version_data.py
 
-## Process data
-process-data: up
+## Processes raw data
+process-data: generate-main-config push
 	$(DOCKER_COMPOSE_EXEC) python ./src/process_data.py
+
+## Local processes raw data
+local-process-data: generate-main-config
+	$(DOCKER_COMPOSE_EXEC) python ./src/process_data.py --config_name config --overrides process_data.docker_image_name=$(GCP_DOCKER_IMAGE_NAME) process_data.docker_image_tag=$(GCP_DOCKER_IMAGE_TAG) 
+
+## Push docker image to GCP artifact registery
+push: build
+	gcloud auth configure-docker --quiet europe-west4-docker.pkg.dev
+	docker tag $(LOCAL_DOCKER_IMAGE_NAME):latest "$(GCP_DOCKER_IMAGE_NAME):$(GCP_DOCKER_IMAGE_TAG)"
+	docker push "$(GCP_DOCKER_IMAGE_NAME):$(GCP_DOCKER_IMAGE_TAG)"
 
 ## Prepare dataset
 prepare-dataset: up
