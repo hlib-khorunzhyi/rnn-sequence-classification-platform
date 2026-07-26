@@ -1,7 +1,9 @@
+from typing import Optional
+
 from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING, SI
 from pydantic.dataclasses import dataclass
-from typing import Optional
+
 
 @dataclass
 class DatasetReaderConfig:
@@ -9,7 +11,9 @@ class DatasetReaderConfig:
     dataset_dir: str = MISSING
     dataset_name: str = MISSING
     gcp_project_id: str = SI("${infrastructure.project_id}")
-    gcp_github_access_token_secret_id: str = SI("${process_data.github_access_token_secret_id}")
+    gcp_github_access_token_secret_id: str = SI(
+        "${process_data.github_access_token_secret_id}"
+    )
     dvc_remote_repo: str = SI("${process_data.dvc_remote_repo}")
     github_user_name: str = SI("${process_data.github_user_name}")
     version: str = SI("${process_data.version}")
@@ -43,8 +47,7 @@ class DatasetReaderManagerConfig:
     repartition: bool = True
     target_partition_size: str = "10MB"
     available_memory: Optional[float] = None
-    
-    
+
 
 def setup_config() -> None:
     cs = ConfigStore.instance()

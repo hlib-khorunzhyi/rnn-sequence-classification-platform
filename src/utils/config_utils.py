@@ -3,14 +3,14 @@ import importlib
 import logging
 import logging.config
 import os
+import pickle
 from collections.abc import Callable
 from dataclasses import asdict
+from io import BytesIO, StringIO
 from typing import Any, Optional, TypeVar
-from io import StringIO, BytesIO
 
 import hydra
 import yaml
-import pickle
 from hydra import compose, initialize
 from hydra.types import TaskFunction
 from omegaconf import DictConfig, OmegaConf
@@ -46,6 +46,7 @@ def get_pickle_config(config_path: str, config_name: str) -> Callable[[F], F]:
             task_function(config)
 
         return decorated_main
+
     return main_decorator
 
 
@@ -68,21 +69,37 @@ def setup_logger() -> None:
 def config_args_parser() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--config-path", type=str, default="../configs/", help="Directory of the config files")
-    parser.add_argument("--config-name", type=str, default="../configs/", help="Name of the config files")
-    parser.add_argument("--overrides", nargs="*", default=[], help="Hydra config overrides")
-    
+    parser.add_argument(
+        "--config-path",
+        type=str,
+        default="../configs/",
+        help="Directory of the config files",
+    )
+    parser.add_argument(
+        "--config-name",
+        type=str,
+        default="../configs/",
+        help="Name of the config files",
+    )
+    parser.add_argument(
+        "--overrides", nargs="*", default=[], help="Hydra config overrides"
+    )
+
     return parser.parse_args()
 
 
-def compose_config(config_path: str, config_name: str, overrides: Optional[list[str]] = None) -> Any:
+def compose_config(
+    config_path: str, config_name: str, overrides: Optional[list[str]] = None
+) -> Any:
     setup_config()
     setup_logger()
 
     if overrides is None:
         overrides = []
-    
-    with initialize(version_base=None, config_path=config_path, job_name="config-compose"):
+
+    with initialize(
+        version_base=None, config_path=config_path, job_name="config-compose"
+    ):
         dict_config = compose(config_name=config_name, overrides=overrides)
         config = OmegaConf.to_object(dict_config)
     return config
@@ -106,7 +123,7 @@ def custom_instantiate(config: Any) -> Any:
     config_as_dict = asdict(config)
     if "_target_" not in config_as_dict:
         raise ValueError("Config does not have _target_ key")
-    
+
     _target_ = config_as_dict["_target_"]
     _partial_ = config_as_dict.get("_partial_", False)
 

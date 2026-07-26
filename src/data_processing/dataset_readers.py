@@ -6,18 +6,35 @@ import dask.dataframe as dd
 from dvc.api import get_url
 
 from src.utils import get_logger
-from src.utils.data_utils import repartition_dataframe, get_repo_address_with_access_token
+from src.utils.data_utils import (
+    get_repo_address_with_access_token,
+    repartition_dataframe,
+)
 
 
 class DatasetReader(ABC):
     required_columns = {"text", "label", "split", "dataset_name"}
     split_names = {"train", "dev", "test"}
 
-    def __init__(self, dataset_dir: str, dataset_name: str, gcp_project_id: str, gcp_github_access_token_secret_id: str, dvc_remote_repo: str, github_user_name: str, version: str) -> None:
+    def __init__(
+        self,
+        dataset_dir: str,
+        dataset_name: str,
+        gcp_project_id: str,
+        gcp_github_access_token_secret_id: str,
+        dvc_remote_repo: str,
+        github_user_name: str,
+        version: str,
+    ) -> None:
         self.logger = get_logger(self.__class__.__name__)
         self.dataset_dir = dataset_dir
         self.dataset_name = dataset_name
-        self.dvc_remote_repo = get_repo_address_with_access_token(gcp_project_id, gcp_github_access_token_secret_id, dvc_remote_repo, github_user_name)
+        self.dvc_remote_repo = get_repo_address_with_access_token(
+            gcp_project_id,
+            gcp_github_access_token_secret_id,
+            dvc_remote_repo,
+            github_user_name,
+        )
         self.version = version
 
     def read_data(self) -> dd.DataFrame:
@@ -97,16 +114,32 @@ class DatasetReader(ABC):
                 dd.from_pandas(train_pdf, npartitions=df.npartitions),  # type: ignore[no-untyped-call]
                 dd.from_pandas(dev_pdf, npartitions=df.npartitions),  # type: ignore[no-untyped-call]
             )
-        
+
     def get_remote_data_url(self, dataset_path: str) -> str:
         return get_url(path=dataset_path, repo=self.dvc_remote_repo, rev=self.version)
 
 
 class GHCDatasetReader(DatasetReader):
     def __init__(
-        self, dataset_dir: str, dataset_name: str, dev_split_ratio: float, gcp_project_id: str, gcp_github_access_token_secret_id: str, dvc_remote_repo: str, github_user_name: str, version: str
+        self,
+        dataset_dir: str,
+        dataset_name: str,
+        dev_split_ratio: float,
+        gcp_project_id: str,
+        gcp_github_access_token_secret_id: str,
+        dvc_remote_repo: str,
+        github_user_name: str,
+        version: str,
     ) -> None:
-        super().__init__(dataset_dir, dataset_name, gcp_project_id, gcp_github_access_token_secret_id, dvc_remote_repo, github_user_name, version)
+        super().__init__(
+            dataset_dir,
+            dataset_name,
+            gcp_project_id,
+            gcp_github_access_token_secret_id,
+            dvc_remote_repo,
+            github_user_name,
+            version,
+        )
         self.dev_split_ratio = dev_split_ratio
 
     def _read_data(self) -> tuple[dd.DataFrame, dd.DataFrame, dd.DataFrame]:
@@ -135,9 +168,25 @@ class GHCDatasetReader(DatasetReader):
 
 class JigsawToxicCommentDatasetReader(DatasetReader):
     def __init__(
-        self, dataset_dir: str, dataset_name: str, dev_split_ratio: float, gcp_project_id: str, gcp_github_access_token_secret_id: str, dvc_remote_repo: str, github_user_name: str, version: str
+        self,
+        dataset_dir: str,
+        dataset_name: str,
+        dev_split_ratio: float,
+        gcp_project_id: str,
+        gcp_github_access_token_secret_id: str,
+        dvc_remote_repo: str,
+        github_user_name: str,
+        version: str,
     ) -> None:
-        super().__init__(dataset_dir, dataset_name, gcp_project_id, gcp_github_access_token_secret_id, dvc_remote_repo, github_user_name, version)
+        super().__init__(
+            dataset_dir,
+            dataset_name,
+            gcp_project_id,
+            gcp_github_access_token_secret_id,
+            dvc_remote_repo,
+            github_user_name,
+            version,
+        )
         self.dev_split_ratio = dev_split_ratio
         self.columns_for_label = [
             "toxic",
@@ -162,11 +211,13 @@ class JigsawToxicCommentDatasetReader(DatasetReader):
         test_df = test_df[test_df["toxic"] != -1]
 
         test_df = self.get_text_and_label_columns(test_df)
+        to_train_df, test_df = self.split_dataset(test_df, 0.1, stratify_column="label")
 
         train_csv_path = os.path.join(self.dataset_dir, "train.csv")
         train_csv_url = self.get_remote_data_url(train_csv_path)
         train_df = dd.read_csv(train_csv_url)
         train_df = self.get_text_and_label_columns(train_df)
+        train_df = dd.concat([train_df, to_train_df])
 
         train_df, dev_df = self.split_dataset(
             train_df, self.dev_split_ratio, stratify_column="label"
@@ -187,9 +238,21 @@ class TwitterDatasetReader(DatasetReader):
         dataset_name: str,
         dev_split_ratio: float,
         test_split_ratio: float,
-        gcp_project_id: str, gcp_github_access_token_secret_id: str, dvc_remote_repo: str, github_user_name: str, version: str
+        gcp_project_id: str,
+        gcp_github_access_token_secret_id: str,
+        dvc_remote_repo: str,
+        github_user_name: str,
+        version: str,
     ):
-        super().__init__(dataset_dir, dataset_name, gcp_project_id, gcp_github_access_token_secret_id, dvc_remote_repo, github_user_name, version)
+        super().__init__(
+            dataset_dir,
+            dataset_name,
+            gcp_project_id,
+            gcp_github_access_token_secret_id,
+            dvc_remote_repo,
+            github_user_name,
+            version,
+        )
         self.dev_split_ratio = dev_split_ratio
         self.test_split_ratio = test_split_ratio
 
@@ -213,7 +276,13 @@ class TwitterDatasetReader(DatasetReader):
 
 
 class DatasetReaderManager:
-    def __init__(self, dataset_readers: dict[str, DatasetReader], repartition: bool = True, target_partition_size: str = "50MB", available_memory: Optional[float] = None) -> None:
+    def __init__(
+        self,
+        dataset_readers: dict[str, DatasetReader],
+        repartition: bool = True,
+        target_partition_size: str = "50MB",
+        available_memory: Optional[float] = None,
+    ) -> None:
         self.dataset_readers = dataset_readers
         self.repartition = repartition
         self.target_partition_size = target_partition_size

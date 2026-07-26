@@ -1,0 +1,7 @@
+# @package _global_
+defaults:
+  - overrides /process_data/dask_cluster: gcp_dask_cluster
+
+process_data:
+  dataset_reader_manager:
+    available_memory: 3.75e9

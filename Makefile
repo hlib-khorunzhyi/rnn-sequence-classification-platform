@@ -49,7 +49,7 @@ process-data: generate-main-config push
 
 ## Local processes raw data
 local-process-data: generate-main-config
-	$(DOCKER_COMPOSE_EXEC) python ./src/process_data.py --config_name config --overrides process_data.docker_image_name=$(GCP_DOCKER_IMAGE_NAME) process_data.docker_image_tag=$(GCP_DOCKER_IMAGE_TAG) 
+	$(DOCKER_COMPOSE_EXEC) python ./src/process_data.py --config_name config --overrides process_data.docker_image_name=$(GCP_DOCKER_IMAGE_NAME) process_data.docker_image_tag=$(GCP_DOCKER_IMAGE_TAG)
 
 ## Push docker image to GCP artifact registery
 push: build

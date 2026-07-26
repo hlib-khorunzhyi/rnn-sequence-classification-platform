@@ -1,9 +1,8 @@
 from pathlib import Path
 from shutil import rmtree
 from subprocess import CalledProcessError
-import psutil
+
 import dask.dataframe as dd
-from typing import Optional
 import pandas as pd
 
 from utils import get_logger, run_shell_command
@@ -60,14 +59,14 @@ def commit_to_dvc(dvc_raw_data_folder: str, dvc_remote_name: str) -> None:
 
 
 def make_new_data_version(dvc_raw_data_folder: str, dvc_remote_name: str) -> None:
-    # try:
-    #     status = run_shell_command(f"dvc status {dvc_raw_data_folder}.dvc")
-    #     if status == "Data and pipelines are up to date.\n":
-    #         DATA_UTILS_LOGGER.info("Data and pipelines are up to date.")
-    #         return
-    #     commit_to_dvc(dvc_raw_data_folder, dvc_remote_name)
-    # except CalledProcessError:
-    commit_to_dvc(dvc_raw_data_folder, dvc_remote_name)
+    try:
+        status = run_shell_command(f"dvc status {dvc_raw_data_folder}.dvc")
+        if status == "Data and pipelines are up to date.\n":
+            DATA_UTILS_LOGGER.info("Data and pipelines are up to date.")
+            return
+        commit_to_dvc(dvc_raw_data_folder, dvc_remote_name)
+    except CalledProcessError:
+        commit_to_dvc(dvc_raw_data_folder, dvc_remote_name)
 
 
 def get_cmd_to_get_raw_data(
@@ -133,12 +132,12 @@ def get_raw_data_with_version(
 
 def repartition_dataframe(
     df: dd.DataFrame,
-    min_partition_size: str, 
+    min_partition_size: str,
 ) -> dd.DataFrame:
-    
+
     DATA_UTILS_LOGGER.info("Smart repartitioning based on target partition size...")
     partitioned_df = df.repartition(partition_size=min_partition_size)
-    
+
     return partitioned_df
 
 
@@ -150,6 +149,9 @@ def get_repo_address_with_access_token(
     return f"https://{user_name}:{access_token}@{repo_address}"
 
 
-def filter_based_on_minimum_number_of_words(df: pd.DataFrame, min_nrof_words: int) -> pd.DataFrame:
-    return df[df["cleaned_text"].str.split().apply(len) >= min_nrof_words]
-
+def filter_based_on_minimum_number_of_words(
+    df: pd.DataFrame, min_nrof_words: int
+) -> pd.DataFrame:
+    word_count = df["cleaned_text"].str.strip().str.count(r"\s+") + 1
+    word_count = word_count.where(df["cleaned_text"].str.strip() != "", 0)
+    return df[word_count >= min_nrof_words]

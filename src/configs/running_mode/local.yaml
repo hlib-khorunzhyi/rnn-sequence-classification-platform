@@ -1,0 +1,8 @@
+# @package _global_
+
+defaults:
+  - override /process_data/dask_cluster: local_dask_cluster
+
+process_data:
+  dataset_reader_manager:
+    available_memory: null

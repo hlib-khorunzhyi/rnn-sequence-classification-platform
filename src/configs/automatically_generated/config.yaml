@@ -41,11 +41,11 @@ process_data:
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
         version: v4
-        dev_split_ratio: 0.25
-        test_split_ratio: 0.2
+        dev_split_ratio: 0.125
+        test_split_ratio: 0.1
     repartition: true
     target_partition_size: 10MB
-    available_memory: 3750000000.0
+    available_memory: null
   dataset_cleaner_manager:
     _target_: src.data_processing.dataset_cleaners.DatasetCleanderManager
     dataset_cleaners:
@@ -90,9 +90,11 @@ process_data:
     security: null
     protocol: null
     worker_class: null
-  processed_data_save_dir: ./data/processed
+  processed_data_save_dir: gs://hlib4081_bucket/data/processed/default_run
+  run_tag: default_run
   docker_image_name: europe-west4-docker.pkg.dev/project-6b154f17-21bb-4de7-947/rnn-sequence-classification-platform/data-processing
-  docker_image_tag: 397fd112-e34a-4012-88a0-88fc73574e87
+  docker_image_tag: aaec8ee0-55ba-48b6-a5a6-d7e2b3abccea
+  min_nrof_words: 2
 infrastructure:
   project_id: project-6b154f17-21bb-4de7-947
   zone: europe-west4-b

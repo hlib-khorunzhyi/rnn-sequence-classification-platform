@@ -1,9 +1,9 @@
-from typing import Optional, Any
+from dataclasses import field
+from typing import Any, Optional
 
 from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING, SI
 from pydantic.dataclasses import dataclass
-from dataclasses import field
 
 
 @dataclass
@@ -38,19 +38,27 @@ class LocalDaskClusterConfig(DaskClusterConfig):
 class GCPDaskClusterConfig(DaskClusterConfig):
     _target_: str = "dask_cloudprovider.gcp.GCPCluster"
     projectid: str = SI("${infrastructure.project_id}")
-    zone: str = SI("$infrastructure.zone")
+    zone: str = SI("${infrastructure.zone}")
     network: str = SI("${infrastructure.network}")
     network_projectid: Optional[str] = SI("${infrastructure.project_id}")
     machine_type: str = "n1-standard-1"
-    source_image: str = "projects/ubuntu-os-cloud/global/images/ubuntu-minimal-2004-focal-v20220203"
+    source_image: str = (
+        "projects/ubuntu-os-cloud/global/images/family/ubuntu-minimal-2204-lts"
+    )
     docker_image: Optional[str] = "daskdev/dask:latest"
     docker_args: str = ""
-    extra_bootstrap: Optional[list[str]] = field(default_factory=lambda: ["gcloud auth configure-docker --quiet europe-west4-docker.pkg.dev"])
+    extra_bootstrap: Optional[list[str]] = field(
+        default_factory=lambda: [
+            "gcloud auth configure-docker --quiet europe-west4-docker.pkg.dev"
+        ]
+    )
     ngpus: Optional[int] = 0
+    scheduler_ngpus: Optional[int] = 0
+    worker_ngpus: Optional[int] = 0
     filesystem_size: Optional[int] = 50
     disk_type: Optional[str] = "pd-standard"
     on_host_maintenance: Optional[str] = "TERMINATE"
-    bootstrap: Optional[bool] = False
+    bootstrap: Optional[bool] = True
 
     n_workers: int = 0
     worker_class: str = "dask.distributed.Nanny"

@@ -1,7 +1,6 @@
-from pathlib import Path
 import os
+from pathlib import Path
 
-import dask.dataframe as dd
 import pandas as pd
 from dask.distributed import Client
 from hydra.utils import instantiate
@@ -9,18 +8,22 @@ from hydra.utils import instantiate
 from config_schemas.config_schema import Config
 from data_processing.dataset_cleaners import DatasetCleanderManager
 from utils import get_logger
-from utils.config_utils import get_config, get_pickle_config, custom_instantiate
-from utils.data_utils import get_raw_data_with_version
+from utils.config_utils import custom_instantiate, get_pickle_config
+from utils.data_utils import (
+    filter_based_on_minimum_number_of_words,
+    get_raw_data_with_version,
+)
 from utils.gcp_utils import access_secret_version
+from utils.io_utils import write_yaml_file
 
 
 def process_raw_data(
-    df_partition: pd.DataFrame,
-    dataset_cleaner_manager: DatasetCleanderManager
+    df_partition: pd.DataFrame, dataset_cleaner_manager: DatasetCleanderManager
 ) -> pd.Series:
     cleaned = df_partition["text"].apply(dataset_cleaner_manager)
-    
+
     return cleaned.astype(str)
+
 
 @get_pickle_config(config_path="src/configs/automatically_generated", config_name="config")  # type: ignore[untyped-decorator]
 def process_data(config: Config) -> None:
@@ -63,16 +66,14 @@ def process_data(config: Config) -> None:
         logger.info("instatiated dataset reader and cleaner managers")
         df = dataset_reader_manager.read_data()
 
-        print(df.compute().head())
-        exit(0)
-
         print(f"{df.npartitions=}")
 
         logger.info("Cleaning data...")
         df = df.assign(
             cleaned_text=df.map_partitions(
-                process_raw_data, dataset_cleaner_manager=dataset_cleaner_manager,
-                meta=("text", "str")
+                process_raw_data,
+                dataset_cleaner_manager=dataset_cleaner_manager,
+                meta=("text", "str"),
             )
         )
 
@@ -80,11 +81,34 @@ def process_data(config: Config) -> None:
         dev_parquet_path = os.path.join(processed_data_save_dir, "dev.parquet")
         test_parquet_path = os.path.join(processed_data_save_dir, "test.parquet")
 
+        train_df = df[df["split"] == "train"]
+        dev_df = df[df["split"] == "dev"]
+        test_df = df[df["split"] == "test"]
+
+        train_df = filter_based_on_minimum_number_of_words(
+            train_df, min_nrof_words=config.process_data.min_nrof_words
+        )
+        dev_df = filter_based_on_minimum_number_of_words(
+            dev_df, min_nrof_words=config.process_data.min_nrof_words
+        )
+        test_df = filter_based_on_minimum_number_of_words(
+            test_df, min_nrof_words=config.process_data.min_nrof_words
+        )
+
         logger.info("Saving split data directly to Parquet via Dask...")
 
-        # df[df["split"] == "train"].to_parquet(train_parquet_path, write_index=False)
-        # df[df["split"] == "dev"].to_parquet(dev_parquet_path, write_index=False)
-        # df[df["split"] == "test"].to_parquet(test_parquet_path, write_index=False)
+        train_df.to_parquet(train_parquet_path, write_index=False)
+        dev_df.to_parquet(dev_parquet_path, write_index=False)
+        test_df.to_parquet(test_parquet_path, write_index=False)
+
+        docker_info = {
+            "docker_image": config.process_data.docker_image_name,
+            "docker_tag": config.process_data.docker_image_tag,
+        }
+        docker_info_save_path = os.path.join(
+            processed_data_save_dir, "docker_info.yaml"
+        )
+        write_yaml_file(docker_info_save_path, docker_info)
 
         logger.info("Data precessing finished")
 

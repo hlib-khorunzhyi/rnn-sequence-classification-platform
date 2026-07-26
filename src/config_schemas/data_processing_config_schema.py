@@ -18,9 +18,7 @@ class DataProcessingConfig:
     )
     dvc_data_folder: str = "data/raw"
     github_user_name: str = "hlib-khorunzhyi"
-    github_access_token_secret_id: str = (
-        "rnn-scp-data-github-access-token"
-    )
+    github_access_token_secret_id: str = "rnn-scp-data-github-access-token"
 
     dataset_reader_manager: dataset_reader_schema.DatasetReaderManagerConfig = MISSING
     dataset_cleaner_manager: dataset_cleaner_schema.DatasetCleanerManagerConfig = (
@@ -28,11 +26,16 @@ class DataProcessingConfig:
     )
 
     dask_cluster: dask_cluster_schema.DaskClusterConfig = MISSING
-    
+
     processed_data_save_dir: str = MISSING
+
+    run_tag: str = "default_run"
 
     docker_image_name: str = MISSING
     docker_image_tag: str = MISSING
+
+    min_nrof_words: int = 2
+
 
 def setup_config() -> None:
     dataset_reader_schema.setup_config()
