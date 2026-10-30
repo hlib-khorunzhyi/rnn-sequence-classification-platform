@@ -5,7 +5,7 @@ from pydantic.dataclasses import dataclass
 @dataclass
 class DVCConfig:
     dvc_remote_name: str = "gcs-storage"
-    dvc_remote_url: str = "gs://hlib4081_bucket/data/raw"
+    dvc_remote_url: str = "gs://hlib10908/data/raw"
     dvc_raw_data_folder: str = "data/raw"
 
 

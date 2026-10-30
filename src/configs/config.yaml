@@ -2,7 +2,7 @@ defaults:
   - config_schema
   - process_data/dataset_reader_manager: ghc_jigsaw_twitter
   - process_data/dataset_cleaner_manager: simple_dataset_cleaner
-  - process_data/dask_cluster: gcp_dask_cluster
+  - process_data/dask_cluster: local_dask_cluster
 
   - override hydra/job_logging: custom
   - override hydra/hydra_logging: disabled
@@ -16,4 +16,4 @@ hydra:
 
 process_data:
   version: v4
-  processed_data_save_dir: gs://hlib4081_bucket/data/processed/${process_data.run_tag}
+  processed_data_save_dir: gs://hlib10908/data/processed/${process_data.run_tag}

@@ -31,9 +31,9 @@ class DataProcessingConfig:
 
     run_tag: str = "default_run"
 
-    docker_image_name: str = MISSING
-    docker_image_tag: str = MISSING
-
+    docker_image_name: str = "rnn-sequence-classification-platform"
+    docker_image_tag: str = "latest"
+    
     min_nrof_words: int = 2
 
 
