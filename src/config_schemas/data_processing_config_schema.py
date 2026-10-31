@@ -18,7 +18,7 @@ class DataProcessingConfig:
     )
     dvc_data_folder: str = "data/raw"
     github_user_name: str = "hlib-khorunzhyi"
-    github_access_token_secret_id: str = "rnn-scp-data-github-access-token"
+    github_access_token_secret_id: str = "rnn-scp-data-access"
 
     dataset_reader_manager: dataset_reader_schema.DatasetReaderManagerConfig = MISSING
     dataset_cleaner_manager: dataset_cleaner_schema.DatasetCleanerManagerConfig = (

@@ -1,6 +1,6 @@
 version_data:
   dvc_remote_name: gcs-storage
-  dvc_remote_url: gs://hlib4081_bucket/data/raw
+  dvc_remote_url: gs://hlib10908/data/raw
   dvc_raw_data_folder: data/raw
 process_data:
   version: v4
@@ -8,7 +8,7 @@ process_data:
   dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
   dvc_data_folder: data/raw
   github_user_name: hlib-khorunzhyi
-  github_access_token_secret_id: rnn-scp-data-github-access-token
+  github_access_token_secret_id: rnn-scp-data-access
   dataset_reader_manager:
     _target_: src.data_processing.dataset_readers.DatasetReaderManager
     dataset_readers:
@@ -16,8 +16,8 @@ process_data:
         _target_: src.data_processing.dataset_readers.GHCDatasetReader
         dataset_dir: ./data/raw/ghc
         dataset_name: ghc
-        gcp_project_id: project-6b154f17-21bb-4de7-947
-        gcp_github_access_token_secret_id: rnn-scp-data-github-access-token
+        gcp_project_id: project-0aa8e71e-af82-45b5-a31
+        gcp_github_access_token_secret_id: rnn-scp-data-access
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
         version: v4
@@ -26,8 +26,8 @@ process_data:
         _target_: src.data_processing.dataset_readers.JigsawToxicCommentDatasetReader
         dataset_dir: ./data/raw/jigsaw-toxic-comments
         dataset_name: jtc
-        gcp_project_id: project-6b154f17-21bb-4de7-947
-        gcp_github_access_token_secret_id: rnn-scp-data-github-access-token
+        gcp_project_id: project-0aa8e71e-af82-45b5-a31
+        gcp_github_access_token_secret_id: rnn-scp-data-access
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
         version: v4
@@ -36,8 +36,8 @@ process_data:
         _target_: src.data_processing.dataset_readers.TwitterDatasetReader
         dataset_dir: ./data/raw/twitter
         dataset_name: twitter
-        gcp_project_id: project-6b154f17-21bb-4de7-947
-        gcp_github_access_token_secret_id: rnn-scp-data-github-access-token
+        gcp_project_id: project-0aa8e71e-af82-45b5-a31
+        gcp_github_access_token_secret_id: rnn-scp-data-access
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
         version: v4
@@ -90,12 +90,12 @@ process_data:
     security: null
     protocol: null
     worker_class: null
-  processed_data_save_dir: gs://hlib4081_bucket/data/processed/default_run
+  processed_data_save_dir: gs://hlib10908/data/processed/default_run
   run_tag: default_run
-  docker_image_name: europe-west4-docker.pkg.dev/project-6b154f17-21bb-4de7-947/rnn-sequence-classification-platform/data-processing
-  docker_image_tag: aaec8ee0-55ba-48b6-a5a6-d7e2b3abccea
+  docker_image_name: europe-west4-docker.pkg.dev/project-0aa8e71e-af82-45b5-a31/rnn-sequence-classification-platform/data-processing
+  docker_image_tag: dc0f1825-7a3c-4d2d-8009-c3e66cf97092
   min_nrof_words: 2
 infrastructure:
-  project_id: project-6b154f17-21bb-4de7-947
+  project_id: project-0aa8e71e-af82-45b5-a31
   zone: europe-west4-b
   network: default
