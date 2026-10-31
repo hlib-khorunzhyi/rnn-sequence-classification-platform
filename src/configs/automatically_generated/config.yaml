@@ -93,7 +93,7 @@ process_data:
   processed_data_save_dir: gs://hlib10908/data/processed/default_run
   run_tag: default_run
   docker_image_name: europe-west4-docker.pkg.dev/project-0aa8e71e-af82-45b5-a31/rnn-sequence-classification-platform/data-processing
-  docker_image_tag: dc0f1825-7a3c-4d2d-8009-c3e66cf97092
+  docker_image_tag: e25c4912-2333-42bb-8f28-de232545e4e8
   min_nrof_words: 2
 infrastructure:
   project_id: project-0aa8e71e-af82-45b5-a31
