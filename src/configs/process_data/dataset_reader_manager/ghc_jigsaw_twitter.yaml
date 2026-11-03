@@ -5,3 +5,5 @@ defaults:
   - dataset_reader@dataset_readers.twitter: twitter
 
 available_memory: null
+
+repartition: false

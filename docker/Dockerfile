@@ -13,7 +13,7 @@ ENV PYTHONUNBUFFERED=1 \
     DEBIAN_FRONTEND=noninteractive \
     TZ=Europe/Warsaw \
     PATH="/usr/local/gcloud/google-cloud-sdk/bin:${VIRTUAL_ENV}/bin:${HOME}/.local/bin:${PATH}" \
-    PYTHONPATH=/app \
+    PYTHONPATH=/app/src:/app \
     BUILD_POETRY_LOCK="${HOME}/poetry.lock.build"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

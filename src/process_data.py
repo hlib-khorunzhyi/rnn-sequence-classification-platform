@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import pandas as pd
+from dask import compute
 from dask.distributed import Client
 from hydra.utils import instantiate
 
@@ -10,10 +11,8 @@ from data_processing.dataset_cleaners import DatasetCleanderManager
 from utils import get_logger
 from utils.config_utils import custom_instantiate, get_pickle_config
 from utils.data_utils import (
-    filter_based_on_minimum_number_of_words,
-    get_raw_data_with_version,
+    filter_based_on_minimum_number_of_words
 )
-from utils.gcp_utils import access_secret_version
 from utils.io_utils import write_yaml_file
 
 
@@ -25,7 +24,9 @@ def process_raw_data(
     return cleaned.astype(str)
 
 
-@get_pickle_config(config_path="src/configs/automatically_generated", config_name="config")  # type: ignore[untyped-decorator]
+@get_pickle_config(  # type: ignore[misc]
+    config_path="src/configs/automatically_generated", config_name="config"
+)
 def process_data(config: Config) -> None:
     # from omegaconf import OmegaConf
 
@@ -39,25 +40,10 @@ def process_data(config: Config) -> None:
 
     cluster = custom_instantiate(config.process_data.dask_cluster)
     client = Client(cluster)
+    
+    print(f"Dask Dashboard: {client.dashboard_link}")
 
     try:
-        # logger.info("started")
-        # github_access_token = access_secret_version(
-        #     config.infrastructure.project_id,
-        #     config.process_data.github_access_token_secret_id,
-        # )
-
-        # logger.info("got github access token")
-        # get_raw_data_with_version(
-        #     version=config.process_data.version,
-        #     data_local_save_dir=config.process_data.data_local_save_dir,
-        #     dvc_remote_repo=config.process_data.dvc_remote_repo,
-        #     dvc_data_folder=config.process_data.dvc_data_folder,
-        #     github_username=config.process_data.github_user_name,
-        #     github_access_token=github_access_token,
-        # )
-        # logger.info("got raw data with version")
-
         dataset_reader_manager = instantiate(config.process_data.dataset_reader_manager)
         dataset_cleaner_manager = instantiate(
             config.process_data.dataset_cleaner_manager
@@ -65,6 +51,12 @@ def process_data(config: Config) -> None:
 
         logger.info("instatiated dataset reader and cleaner managers")
         df = dataset_reader_manager.read_data()
+
+        logger.info(f"Number of partitions: {df.npartitions}")
+
+        logger.info(
+            f"Partition sizes: {df.map_partitions(len).compute()}"
+        )
 
         print(f"{df.npartitions=}")
 
@@ -97,9 +89,12 @@ def process_data(config: Config) -> None:
 
         logger.info("Saving split data directly to Parquet via Dask...")
 
-        train_df.to_parquet(train_parquet_path, write_index=False)
-        dev_df.to_parquet(dev_parquet_path, write_index=False)
-        test_df.to_parquet(test_parquet_path, write_index=False)
+        train_write = train_df.to_parquet(train_parquet_path, write_index=False, compute=False)
+        dev_write = dev_df.to_parquet(dev_parquet_path, write_index=False, compute=False)
+        test_write = test_df.to_parquet(test_parquet_path, write_index=False, compute=False)
+
+        logger.info("Computiog all Paquet write tasks...")
+        compute(train_write, dev_write, test_write)
 
         docker_info = {
             "docker_image": config.process_data.docker_image_name,

@@ -1,3 +1,4 @@
+from pathlib import Path
 import re
 import string
 from abc import ABC, abstractmethod
@@ -11,6 +12,8 @@ except LookupError:
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import time
+from utils import get_logger
 
 from src.utils import SpellCorrectionModel
 
@@ -74,9 +77,8 @@ class PunctuationDatasetCleaner(DatasetCleaner):
         return " ".join(self.clean_words(text.split()))
 
     def clean_words(self, words: list[str]) -> list[str]:
-        return [
-            word.translate(self.table) for word in words if word.translate(self.table)
-        ]
+        cleaned_words = [word.translate(self.table) for word in words]
+        return [word for word in cleaned_words if word]
 
 
 class NonLetterDatasetCleaner(DatasetCleaner):
@@ -152,6 +154,13 @@ class DatasetCleanderManager:
         self.dataset_cleaners = dataset_cleaners
 
     def __call__(self, text: str | list[str]) -> str | list[str]:
-        for dataset_cleaner in self.dataset_cleaners.values():
-            text = dataset_cleaner(text)
+        logger = get_logger(Path(__file__).stem)
+        for name, cleaner in self.dataset_cleaners.items():
+            start = time.perf_counter()
+            
+            text = cleaner(text)
+
+            elapsed = time.perf_counter() - start
+
+            logger.info("Cleaner %s took %.6f seconds", name, elapsed)
         return text

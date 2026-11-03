@@ -3,7 +3,7 @@ version_data:
   dvc_remote_url: gs://hlib10908/data/raw
   dvc_raw_data_folder: data/raw
 process_data:
-  version: v4
+  version: v6
   data_local_save_dir: ./data/raw
   dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
   dvc_data_folder: data/raw
@@ -20,7 +20,7 @@ process_data:
         gcp_github_access_token_secret_id: rnn-scp-data-access
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
-        version: v4
+        version: v6
         dev_split_ratio: 0.3
       jtc:
         _target_: src.data_processing.dataset_readers.JigsawToxicCommentDatasetReader
@@ -30,7 +30,7 @@ process_data:
         gcp_github_access_token_secret_id: rnn-scp-data-access
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
-        version: v4
+        version: v6
         dev_split_ratio: 0.06
       twitter:
         _target_: src.data_processing.dataset_readers.TwitterDatasetReader
@@ -40,10 +40,10 @@ process_data:
         gcp_github_access_token_secret_id: rnn-scp-data-access
         dvc_remote_repo: https://github.com/hlib-khorunzhyi/rnn-sequence-classification-platform.git
         github_user_name: hlib-khorunzhyi
-        version: v4
+        version: v6
         dev_split_ratio: 0.125
         test_split_ratio: 0.1
-    repartition: true
+    repartition: false
     target_partition_size: 10MB
     available_memory: null
   dataset_cleaner_manager:
@@ -59,13 +59,6 @@ process_data:
         _target_: src.data_processing.dataset_cleaners.ReTweetDatasetCleaner
       lo_lower_case:
         _target_: src.data_processing.dataset_cleaners.ToLowerCaseDatasetCleaner
-      spell_correction:
-        _target_: src.data_processing.dataset_cleaners.SpellCorrectionDatasetCleaner
-        spell_correction_model:
-          _target_: src.utils.SpellCorrectionModel
-          max_dictionary_edit_distance: 2
-          prefix_length: 7
-          count_threshold: 1
       non_ascii:
         _target_: src.data_processing.dataset_cleaners.NonASCIIDatasetCleaner
       punctuation:
@@ -73,27 +66,50 @@ process_data:
         punctuation: '!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~'
       non_letters:
         _target_: src.data_processing.dataset_cleaners.NonLetterDatasetCleaner
+      spell_correction:
+        _target_: src.data_processing.dataset_cleaners.SpellCorrectionDatasetCleaner
+        spell_correction_model:
+          _target_: src.utils.SpellCorrectionModel
+          max_dictionary_edit_distance: 2
+          prefix_length: 7
+          count_threshold: 1
       stop_words:
         _target_: src.data_processing.dataset_cleaners.StopWordsDatasetCleaner
   dask_cluster:
-    _target_: dask.distributed.LocalCluster
-    n_workers: 12
-    memory_limit: auto
-    processes: true
-    threads_per_worker: 1
-    scheduler_port: 8786
-    host: null
-    dashboard_address: :8787
-    asynchronous: false
-    blocked_handlers: null
-    service_kwargs: null
-    security: null
-    protocol: null
-    worker_class: null
+    _target_: dask_cloudprovider.gcp.GCPCluster
+    n_workers: 6
+    projectid: project-0aa8e71e-af82-45b5-a31
+    zone: europe-west4-b
+    network: default
+    network_projectid: project-0aa8e71e-af82-45b5-a31
+    machine_type: n2-standard-2
+    source_image: projects/ubuntu-os-cloud/global/images/family/ubuntu-minimal-2204-lts
+    docker_image: europe-west4-docker.pkg.dev/project-0aa8e71e-af82-45b5-a31/rnn-sequence-classification-platform/data-processing:7391252b-79b2-44ba-ac22-c878a2219878
+    docker_args: ''
+    extra_bootstrap:
+    - gcloud auth configure-docker --quiet europe-west4-docker.pkg.dev
+    ngpus: 0
+    scheduler_ngpus: 0
+    worker_ngpus: 0
+    filesystem_size: 50
+    disk_type: pd-standard
+    on_host_maintenance: TERMINATE
+    bootstrap: true
+    worker_class: dask.distributed.Nanny
+    worker_options:
+      nthreads: 1
+    env_vars: {}
+    scheduler_options: {}
+    silence_logs: null
+    asynchronous: null
+    security: true
+    preemptible: false
+    debug: false
+    instance_labels: null
   processed_data_save_dir: gs://hlib10908/data/processed/default_run
   run_tag: default_run
   docker_image_name: europe-west4-docker.pkg.dev/project-0aa8e71e-af82-45b5-a31/rnn-sequence-classification-platform/data-processing
-  docker_image_tag: e25c4912-2333-42bb-8f28-de232545e4e8
+  docker_image_tag: 7391252b-79b2-44ba-ac22-c878a2219878
   min_nrof_words: 2
 infrastructure:
   project_id: project-0aa8e71e-af82-45b5-a31

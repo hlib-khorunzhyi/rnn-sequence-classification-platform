@@ -152,6 +152,13 @@ def get_repo_address_with_access_token(
 def filter_based_on_minimum_number_of_words(
     df: pd.DataFrame, min_nrof_words: int
 ) -> pd.DataFrame:
-    word_count = df["cleaned_text"].str.strip().str.count(r"\s+") + 1
-    word_count = word_count.where(df["cleaned_text"].str.strip() != "", 0)
+    # word_count = df["cleaned_text"].str.strip().str.count(r"\s+") + 1
+    # word_count = word_count.where(df["cleaned_text"].str.strip() != "", 0)
+    # return df[word_count >= min_nrof_words]
+
+    text = df["cleaned_text"].fillna("").str.strip()
+
+    word_count = text.str.count(r"\s+")
+    word_count += (text != "").astype("int8")
+
     return df[word_count >= min_nrof_words]

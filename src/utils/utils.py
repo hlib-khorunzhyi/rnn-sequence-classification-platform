@@ -5,7 +5,7 @@ from importlib import resources
 from typing import cast
 
 import symspellpy
-from symspellpy import SymSpell
+from symspellpy import SymSpell, Verbosity
 
 
 def get_logger(name: str) -> logging.Logger:
@@ -49,9 +49,26 @@ class SpellCorrectionModel:
 
         return model
 
-    def __call__(self, text: str) -> str:
-        result = self.model.lookup_compound(
-            text, max_edit_distance=self.max_dictionary_edit_distance
-        )[0].term
+    # def __call__(self, text: str) -> str:
+    #     result = self.model.lookup_compound(
+    #         text, max_edit_distance=self.max_dictionary_edit_distance
+    #     )[0].term
 
-        return cast(str, result)
+    #     return cast(str, result)
+
+    def __call__(self, text: str) -> str:
+        words = text.split()
+        corrected_words = []
+
+        for word in words:
+            suggestions = self.model.lookup(
+                word,
+                Verbosity.TOP,
+                max_edit_distance=self.max_dictionary_edit_distance,
+            )
+
+            corrected_words.append(
+                suggestions[0].term if suggestions else word
+            )
+
+        return " ".join(corrected_words)
