@@ -21,9 +21,7 @@ def initialize_model(
     )
 
     dictionary_path = str(
-        resources.files("symspellpy").joinpath(
-            "frequency_dictionary_en_82_765.txt"
-        )
+        resources.files("symspellpy").joinpath("frequency_dictionary_en_82_765.txt")
     )
     bigram_dictionary_path = str(
         resources.files("symspellpy").joinpath(
@@ -89,18 +87,11 @@ def load_texts(file_path: str | None, sample_size: int) -> list[str]:
 
     if file_path:
         with open(file_path, encoding="utf-8") as file:
-            texts = [
-                line.strip()
-                for line in file
-                if line.strip()
-            ]
+            texts = [line.strip() for line in file if line.strip()]
 
         return texts[:sample_size]
 
-    print(
-        "WARNING: No input file provided. "
-        "Using demonstration texts instead."
-    )
+    print("WARNING: No input file provided. " "Using demonstration texts instead.")
 
     samples = [
         "I recieved an adress from the custmer yesterday.",
@@ -139,8 +130,7 @@ def benchmark_method(
         start = time.perf_counter()
 
         current_results = [
-            correction_function(model, text, max_edit_distance)
-            for text in texts
+            correction_function(model, text, max_edit_distance) for text in texts
         ]
 
         elapsed = time.perf_counter() - start
@@ -151,10 +141,7 @@ def benchmark_method(
     print(f"  Median time: {statistics.median(timings):.4f} sec")
     print(f"  Min time:    {min(timings):.4f} sec")
     print(f"  Max time:    {max(timings):.4f} sec")
-    print(
-        f"  Throughput:  "
-        f"{len(texts) / statistics.median(timings):.2f} texts/sec"
-    )
+    print(f"  Throughput:  " f"{len(texts) / statistics.median(timings):.2f} texts/sec")
 
     return results, timings
 
@@ -179,10 +166,7 @@ def compare_results(
     print("\nResult comparison")
     print(f"  Total texts:       {len(texts)}")
     print(f"  Different results: {len(differences)}")
-    print(
-        f"  Same results:      "
-        f"{len(texts) - len(differences)}"
-    )
+    print(f"  Same results:      " f"{len(texts) - len(differences)}")
 
     if differences:
         print("\nExamples of different corrections:")
@@ -238,9 +222,7 @@ def main() -> None:
     print(f"Max edit distance: {args.max_edit_distance}")
 
     start = time.perf_counter()
-    model = initialize_model(
-        max_dictionary_edit_distance=args.max_edit_distance
-    )
+    model = initialize_model(max_dictionary_edit_distance=args.max_edit_distance)
     initialization_time = time.perf_counter() - start
 
     print(f"Model initialization: {initialization_time:.4f} sec")
@@ -275,15 +257,9 @@ def main() -> None:
     print("\nPerformance comparison")
 
     if word_median < compound_median:
-        print(
-            f"  Word-by-word is "
-            f"{compound_median / word_median:.2f}x faster."
-        )
+        print(f"  Word-by-word is " f"{compound_median / word_median:.2f}x faster.")
     elif compound_median < word_median:
-        print(
-            f"  Compound is "
-            f"{word_median / compound_median:.2f}x faster."
-        )
+        print(f"  Compound is " f"{word_median / compound_median:.2f}x faster.")
     else:
         print("  Both methods have the same median execution time.")
 

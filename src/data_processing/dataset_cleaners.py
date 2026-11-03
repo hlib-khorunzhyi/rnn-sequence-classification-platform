@@ -1,7 +1,7 @@
-from pathlib import Path
 import re
 import string
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 import nltk
 
@@ -10,12 +10,13 @@ try:
 except LookupError:
     nltk.download("punkt_tab")
 
+import time
+
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-import time
-from utils import get_logger
 
 from src.utils import SpellCorrectionModel
+from utils import get_logger
 
 
 class DatasetCleaner(ABC):
@@ -157,7 +158,7 @@ class DatasetCleanderManager:
         logger = get_logger(Path(__file__).stem)
         for name, cleaner in self.dataset_cleaners.items():
             start = time.perf_counter()
-            
+
             text = cleaner(text)
 
             elapsed = time.perf_counter() - start

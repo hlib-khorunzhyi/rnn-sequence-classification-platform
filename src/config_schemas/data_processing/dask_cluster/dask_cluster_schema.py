@@ -1,5 +1,5 @@
 from dataclasses import field
-from typing import Any, Optional
+from typing import Any
 
 from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING, SI
@@ -24,14 +24,14 @@ class LocalDaskClusterConfig(DaskClusterConfig):
     processes: bool = True
     threads_per_worker: int = 1
     scheduler_port: int = 8786
-    host: Optional[str] = None
+    host: str | None = None
     dashboard_address: str = ":8787"
     asynchronous: bool = False
-    blocked_handlers: Optional[list[str]] = None
-    service_kwargs: Optional[dict[str, dict]] = None
-    security: Optional[bool] = None
-    protocol: Optional[str] = None
-    worker_class: Optional[WorkerClassConfig] = None
+    blocked_handlers: list[str] | None = None
+    service_kwargs: dict[str, dict[str, Any]] | None = None
+    security: bool | None = None
+    protocol: str | None = None
+    worker_class: WorkerClassConfig | None = None
 
 
 @dataclass
@@ -40,37 +40,37 @@ class GCPDaskClusterConfig(DaskClusterConfig):
     projectid: str = SI("${infrastructure.project_id}")
     zone: str = SI("${infrastructure.zone}")
     network: str = SI("${infrastructure.network}")
-    network_projectid: Optional[str] = SI("${infrastructure.project_id}")
+    network_projectid: str | None = SI("${infrastructure.project_id}")
     machine_type: str = "n1-standard-1"
     source_image: str = (
         "projects/ubuntu-os-cloud/global/images/family/ubuntu-minimal-2204-lts"
     )
-    docker_image: Optional[str] = "daskdev/dask:latest"
+    docker_image: str | None = "daskdev/dask:latest"
     docker_args: str = ""
-    extra_bootstrap: Optional[list[str]] = field(
+    extra_bootstrap: list[str] | None = field(
         default_factory=lambda: [
             "gcloud auth configure-docker --quiet europe-west4-docker.pkg.dev"
         ]
     )
-    ngpus: Optional[int] = 0
-    scheduler_ngpus: Optional[int] = 0
-    worker_ngpus: Optional[int] = 0
-    filesystem_size: Optional[int] = 50
-    disk_type: Optional[str] = "pd-standard"
-    on_host_maintenance: Optional[str] = "TERMINATE"
-    bootstrap: Optional[bool] = True
+    ngpus: int | None = 0
+    scheduler_ngpus: int | None = 0
+    worker_ngpus: int | None = 0
+    filesystem_size: int | None = 50
+    disk_type: str | None = "pd-standard"
+    on_host_maintenance: str | None = "TERMINATE"
+    bootstrap: bool | None = True
 
     n_workers: int = 0
     worker_class: str = "dask.distributed.Nanny"
-    worker_options: dict[str, Any] = field(default_factory=lambda: {})
-    env_vars: dict[str, str] = field(default_factory=lambda: {})
-    scheduler_options: dict[str, str] = field(default_factory=lambda: {})
-    silence_logs: Optional[bool] = None
-    asynchronous: Optional[bool] = None
+    worker_options: dict[str, Any] = field(default_factory=dict)
+    env_vars: dict[str, str] = field(default_factory=dict)
+    scheduler_options: dict[str, str] = field(default_factory=dict)
+    silence_logs: bool | None = None
+    asynchronous: bool | None = None
     security: bool = True
-    preemptible: Optional[bool] = False
-    debug: Optional[bool] = False
-    instance_labels: Optional[dict[str, str]] = None
+    preemptible: bool | None = False
+    debug: bool | None = False
+    instance_labels: dict[str, str] | None = None
 
 
 def setup_config() -> None:

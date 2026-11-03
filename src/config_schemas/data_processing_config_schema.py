@@ -33,7 +33,7 @@ class DataProcessingConfig:
 
     docker_image_name: str = "rnn-sequence-classification-platform"
     docker_image_tag: str = "latest"
-    
+
     min_nrof_words: int = 2
 
 

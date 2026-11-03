@@ -2,7 +2,6 @@ import logging
 import socket
 import subprocess
 from importlib import resources
-from typing import cast
 
 import symspellpy
 from symspellpy import SymSpell, Verbosity
@@ -67,8 +66,6 @@ class SpellCorrectionModel:
                 max_edit_distance=self.max_dictionary_edit_distance,
             )
 
-            corrected_words.append(
-                suggestions[0].term if suggestions else word
-            )
+            corrected_words.append(suggestions[0].term if suggestions else word)
 
         return " ".join(corrected_words)

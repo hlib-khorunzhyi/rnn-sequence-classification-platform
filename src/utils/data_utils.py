@@ -136,7 +136,7 @@ def repartition_dataframe(
 ) -> dd.DataFrame:
 
     DATA_UTILS_LOGGER.info("Smart repartitioning based on target partition size...")
-    partitioned_df = df.repartition(partition_size=min_partition_size)
+    partitioned_df: dd.DataFrame = df.repartition(partition_size=min_partition_size)
 
     return partitioned_df
 

@@ -84,7 +84,7 @@ class DatasetReader(ABC):
             )
             return train_df, dev_df
 
-        pdf = df.compute()  # type: ignore[no-untyped-call]
+        pdf = df.compute()
 
         from sklearn.model_selection import train_test_split as sk_split
 
