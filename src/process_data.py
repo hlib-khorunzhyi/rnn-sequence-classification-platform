@@ -22,9 +22,9 @@ def process_raw_data(
     return cleaned.astype(str)
 
 
-@get_pickle_config(  # type: ignore[misc]
+@get_pickle_config(
     config_path="src/configs/automatically_generated", config_name="config"
-) 
+)
 def process_data(config: Config) -> None:
     # from omegaconf import OmegaConf
 

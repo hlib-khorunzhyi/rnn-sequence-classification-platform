@@ -45,11 +45,19 @@ version-data: up
 
 ## Processes raw data
 process-data: generate-main-config push
-	$(DOCKER_COMPOSE_EXEC) python ./src/process_data.py
+	$(DOCKER_COMPOSE_EXEC) python ./src/process_data.py --config_name config --overrides process_data.docker_image_name=$(GCP_DOCKER_IMAGE_NAME) process_data.docker_image_tag=$(GCP_DOCKER_IMAGE_TAG)
 
 ## Local processes raw data
 local-process-data: generate-main-config
-	$(DOCKER_COMPOSE_EXEC) python ./src/process_data.py --config_name config --overrides process_data.docker_image_name=$(GCP_DOCKER_IMAGE_NAME) process_data.docker_image_tag=$(GCP_DOCKER_IMAGE_TAG)
+	$(DOCKER_COMPOSE_EXEC) python ./src/process_data.py 
+
+## Train the tokenizer
+train-tokenizer: generate-main-config push
+	$(DOCKER_COMPOSE_EXEC) python ./src/train_tokenizer.py --config_name config --overrides process_data.docker_image_name=$(GCP_DOCKER_IMAGE_NAME) process_data.docker_image_tag=$(GCP_DOCKER_IMAGE_TAG)
+
+## Train the tokenizer locally
+local-train-tokenizer: generate-main-config
+	$(DOCKER_COMPOSE_EXEC) python ./src/train_tokenizer.py
 
 ## Push docker image to GCP artifact registery
 push: build

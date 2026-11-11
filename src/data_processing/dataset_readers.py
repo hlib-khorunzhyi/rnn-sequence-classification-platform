@@ -116,8 +116,8 @@ class DatasetReader(ABC):
             )
 
     def get_remote_data_url(self, dataset_path: str) -> str:
-        return get_url(path=dataset_path, repo=self.dvc_remote_repo, rev=self.version)
-
+        url: str = get_url(path=dataset_path, repo=self.dvc_remote_repo, rev=self.version)
+        return url
 
 class GHCDatasetReader(DatasetReader):
     def __init__(

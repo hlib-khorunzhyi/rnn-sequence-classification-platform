@@ -3,7 +3,11 @@ from dataclasses import field
 from hydra.core.config_store import ConfigStore
 from pydantic.dataclasses import dataclass
 
-from config_schemas import data_processing_config_schema, dvc_config_schema
+from config_schemas import (
+    data_processing_config_schema,
+    dvc_config_schema,
+    tokenizer_training_token_schema,
+)
 from config_schemas.infrastructure import gcp_schema
 
 
@@ -17,11 +21,16 @@ class Config:
     )
     infrastructure: gcp_schema.GCPConfig = field(default_factory=gcp_schema.GCPConfig)
 
+    train_tokenizer: tokenizer_training_token_schema.TokenaizerTrainingConfig = field(
+        default_factory=tokenizer_training_token_schema.TokenaizerTrainingConfig
+    )
+
 
 def setup_config() -> None:
     dvc_config_schema.setup_config()
     data_processing_config_schema.setup_config()
     gcp_schema.setup_config()
+    tokenizer_training_token_schema.setup_config()
 
     cs = ConfigStore.instance()
     cs.store(name="config_schema", node=Config)

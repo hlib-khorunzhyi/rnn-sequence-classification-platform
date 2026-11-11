@@ -84,7 +84,7 @@ process_data:
     network_projectid: project-0aa8e71e-af82-45b5-a31
     machine_type: n2-standard-2
     source_image: projects/ubuntu-os-cloud/global/images/family/ubuntu-minimal-2204-lts
-    docker_image: europe-west4-docker.pkg.dev/project-0aa8e71e-af82-45b5-a31/rnn-sequence-classification-platform/data-processing:7391252b-79b2-44ba-ac22-c878a2219878
+    docker_image: europe-west4-docker.pkg.dev/project-0aa8e71e-af82-45b5-a31/rnn-sequence-classification-platform/data-processing:01c2cd98-be64-4c23-a08f-67372c77c60f
     docker_args: ''
     extra_bootstrap:
     - gcloud auth configure-docker --quiet europe-west4-docker.pkg.dev
@@ -109,9 +109,50 @@ process_data:
   processed_data_save_dir: gs://hlib10908/data/processed/default_run
   run_tag: default_run
   docker_image_name: europe-west4-docker.pkg.dev/project-0aa8e71e-af82-45b5-a31/rnn-sequence-classification-platform/data-processing
-  docker_image_tag: 7391252b-79b2-44ba-ac22-c878a2219878
+  docker_image_tag: 01c2cd98-be64-4c23-a08f-67372c77c60f
   min_nrof_words: 2
 infrastructure:
   project_id: project-0aa8e71e-af82-45b5-a31
   zone: europe-west4-b
   network: default
+train_tokenizer:
+  docker_image_name: rnn-sequence-classification-platform
+  docker_image_tag: latest
+  tokenization:
+    _target_: src.tokenization.tokenizers.HuggingFaceTokenizer
+    pre_tokenizer:
+      _target_: tokenizers.pre_tokenizers.Whitespace
+    model:
+      _target_: tokenizers.models.BPE
+      vocab: null
+      merges: null
+      cache_capacity: 10000
+      dropout: null
+      unk_token: null
+      continuing_subword_prefix: ''
+      end_of_word_suffix: ''
+      fuse_unk: false
+      byte_fallback: false
+      ignore_merges: false
+    trainer:
+      _target_: tokenizers.trainers.BpeTrainer
+      vocab_size: 30000
+      show_progress: true
+      min_frequency: 0
+      special_tokens:
+      - '[UNK]'
+      - '[CLS]'
+      - '[SEP]'
+      - '[PAD]'
+      - '[MASK]'
+      initial_alphabet: []
+    normalizer: null
+    decoder: null
+    post_processor: null
+    unk_token: '[UNK]'
+    cls_token: '[CLS]'
+    sep_token: '[SEP]'
+    pad_token: '[PAD]'
+    mask_token: '[MASK]'
+  data_parquet_path: gs://hlib10908/data/processed/default_run/train.parquet
+  text_column_name: cleaned_text

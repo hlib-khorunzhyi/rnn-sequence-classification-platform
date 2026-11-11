@@ -4,6 +4,8 @@ defaults:
   - process_data/dataset_cleaner_manager: simple_dataset_cleaner
   - process_data/dask_cluster: gcp_dask_cluster
 
+  - tokenization@train_tokenizer.tokenization: bpe_tokenizer
+
   - override hydra/job_logging: custom
   - override hydra/hydra_logging: disabled
 
@@ -17,3 +19,7 @@ hydra:
 process_data:
   version: v6
   processed_data_save_dir: gs://hlib10908/data/processed/${process_data.run_tag}
+
+train_tokenizer:
+  data_parquet_path: gs://hlib10908/data/processed/default_run/train.parquet
+  text_column_name: cleaned_text
